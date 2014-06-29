@@ -2,3 +2,5 @@
 *.hi
 *.o
 *.bak
+/heliumEditor/src/PresentationAG.hs
+/heliumEditor/src/ScannerSheetHS.hs

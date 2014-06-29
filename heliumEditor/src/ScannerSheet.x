@@ -11,7 +11,7 @@ $upper = [A-Z]
 $alpha = [$lower $upper]        -- alphabetic characters
 
 tokens :-
-    
+
 
   [\n \ ]+         { collectWhitespace }
   module           { mkToken $ \s -> KeyTk s }

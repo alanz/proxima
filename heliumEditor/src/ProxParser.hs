@@ -8,19 +8,19 @@ import Presentation.XprezLib
 
 import UU.Parsing
 
-import List hiding (delete)
+import Data.List hiding (delete)
 
 
 import ProxParser_Generated
 import Evaluation.DocumentEdit
 
-import Char
+import Data.Char
 
 import DocTypes_Generated
 import DocUtils_Generated
 
 
--------------------- Proxima Parser/Structure Recognizer -------------------- 
+-------------------- Proxima Parser/Structure Recognizer --------------------
 
 
 recognizeEnrichedDoc :: ProxParser EnrichedDoc
@@ -30,7 +30,7 @@ recognizeEnrichedDoc = pStr $
       <*> recognizeRootE
 
 recognizeRootE :: ProxParser RootE
-recognizeRootE = pStr $ 
+recognizeRootE = pStr $
           (\str idlistdecls decls-> reuseRootE [str] Nothing (Just decls) (Just idlistdecls))
       <$> pStructuralTk Node_RootE
       <*> parseIDListList_Decl {- <* (pStr' $ pStructuralTk Node_List_Decl) -}  <*> recognizeList_Decl
@@ -38,9 +38,9 @@ recognizeRootE = pStr $
 
 parseIDListList_Decl :: ProxParser List_Decl
 parseIDListList_Decl = pPrs $
-          (\dcls -> reuseList_Decl [] (Just $ toConsList_Decl dcls)) 
+          (\dcls -> reuseList_Decl [] (Just $ toConsList_Decl dcls))
       <$> pList recognizeIDListDecl
-             
+
 recognizeIDListDecl :: ProxParser Decl
 recognizeIDListDecl = pStr $
           (\str ident -> reuseDecl [str] Nothing Nothing Nothing Nothing Nothing Nothing (Just ident) Nothing)
@@ -50,27 +50,27 @@ recognizeIDListDecl = pStr $
       <$> pStructuralTk Node_BoardDecl
   <|>     (\str -> reusePPPresentationDecl [str] Nothing Nothing Nothing)
       <$> pStructuralTk Node_PPPresentationDecl
-     {- <|>  
+     {- <|>
                       (\str -> HoleDecl
                   <$> pSym declHoleTk
--}       
+-}
 
 parseIdListIdent :: ProxParser Ident
 parseIdListIdent =  pPrs $
           (\strTk -> reuseIdent [strTk] Nothing Nothing (Just $ tokenString strTk))
-      <$> pLIdent 
+      <$> pLIdent
 
 -------------------- Chess board parser:
 
-parseBoard = 
+parseBoard =
       ((\_ -> initBoard) <$> pKey "board")
   <|>     (\str -> reuseBoard [str] Nothing Nothing Nothing Nothing Nothing Nothing Nothing Nothing) 
       <$> pStructuralTk Node_Board -- don't descend into structure, so no pres edit
 
 
 -------------------- Powerpoint parser:
-   
-parsePPPresentation = 
+
+parsePPPresentation =
       ((\_ -> initPPPresentation) <$> pKey "pres")
   <|> recognizePPPresentation
 
@@ -78,12 +78,12 @@ recognizePPPresentation = pStr $                       -- viewTp
          (\str list_slide -> reusePPPresentation [str] Nothing (Just list_slide))
      <$> pStructuralTk Node_PPPresentation
      <*> recognizeList_Slide
- 
+
 recognizeList_Slide = pStr $
          (\str slides -> reuseList_Slide [str] (Just $ toConsList_Slide slides)) 
      <$> pStructuralTk Node_List_Slide
      <*> pList recognizeSlide
-  
+
         -- maybe make a recognizeConsList_Slide?
 
 recognizeSlide =  pStr $
@@ -105,11 +105,11 @@ recognizeListType = pStr $
      <$> pStructuralTk Node_Alpha
 
 recognizeList_Item = pStr $
-         (\str items -> reuseList_Item [str] (Just $ toConsList_Item items)) 
+         (\str items -> reuseList_Item [str] (Just $ toConsList_Item items))
      <$> pStructuralTk Node_List_Item
      <*> pList recognizeItem
 
-recognizeItem = pStr $ 
+recognizeItem = pStr $
          (\str string -> reuseStringItem [str] (Just string))
      <$> pStructuralTk Node_StringItem
      <*> (pPrs $ tokenString <$> pLIdent)
@@ -124,9 +124,9 @@ recognizeItem = pStr $
 recognizeExp =
          recognizeExp'
   <|>    pPrs parseExp
-         
 
-recognizeExp' = 
+
+recognizeExp' =
          (pStrAlt Node_DivExp $
          (\str e1 e2 -> reuseDivExp [str] (Just $ getTokenIDP str) (Just e1) (Just e2))
      <$> pStructuralTk Node_DivExp
@@ -143,8 +143,8 @@ recognizeExp' =
 
 recognizeList_Decl = pPrs $
           parseList_Decl
-        
-parseList_Decl = 
+
+parseList_Decl =
           (\decls -> reuseList_Decl [] (Just $ toConsList_Decl decls))
       <$> pList parseDecl
 
@@ -155,8 +155,8 @@ parseDecl  =                                                              -- IDD
   <|>     (\sig ident tk1 tk2 -> reuseDecl [tk1, tk2] (Just $ getTokenIDP tk1) Nothing (typeSigTokenIDP sig) Nothing Nothing Nothing (Just ident) Nothing)--makeDecl' mtk0 tk1 tk2 ident) 
       <$> pMaybe (pStructuralTk Node_Decl) -- type sig/value
       <*> parseIdent <*> pKey "=" <*> pKey "..." -- bit weird what happens when typing ... maybe this must be done with a structural presentation (wasn't possible before with structural parser that was too general)
- <|>      (\tk board ->  BoardDecl (getTokenIDP tk) NoIDP board) 
-      <$> pKey "Chess" <* pKey ":" <*> parseBoard        
+ <|>      (\tk board ->  BoardDecl (getTokenIDP tk) NoIDP board)
+      <$> pKey "Chess" <* pKey ":" <*> parseBoard
  <|>      (\tk slides ->  PPPresentationDecl (getTokenIDP tk) NoIDP slides)
       <$> pKey "Slides" <* pKey ":" <*> parsePPPresentation
  where typeSigTokenIDP Nothing   = Nothing
@@ -168,25 +168,25 @@ parseList_Alt =
          (\alts -> reuseList_Alt [] (Just $ toConsList_Alt alts))
      <$> pList parseAlt
 
-parseAlt  = 
+parseAlt  =
          (\ident tk1 exp tk2 -> reuseAlt [tk1, tk2] (Just $ getTokenIDP tk1) (Just $ getTokenIDP tk2) (Just ident) (Just exp))
      <$> parseIdent <*> pArrow <*> parseExp  <*> pKeyC 4 ";"
 
 
 -- Exp
 
-parseIdentExp = 
+parseIdentExp =
          (\ident -> reuseIdentExp [] (Just ident))
      <$> parseIdent
 
-parseIfExp = 
+parseIfExp =
          (\tk1 c tk2 th tk3 el -> reuseIfExp [tk1, tk2,tk3] (Just $ getTokenIDP tk1) (Just $ getTokenIDP tk2) (Just $ getTokenIDP tk3) (Just c) (Just th) (Just el))
      <$> pIf <*> parseExp <*> pThen <*> parseExp <*> pElse <*> parseExp
 
-parseLamExp = 
+parseLamExp =
          (\tk1 a tk2 b -> reuseLamExp [tk1, tk2] (Just $ getTokenIDP tk1) (Just $ getTokenIDP tk2) (Just a) (Just b))
      <$> pLambda <*> parseIdent <*> pArrow <*> parseExp
-            
+
 parseCaseExp =
          (\tk1 a tk2 b -> reuseCaseExp [tk1, tk2] (Just $ getTokenIDP tk1) (Just $ getTokenIDP tk2) (Just a) (Just b))
      <$> pCase <*> parseExp <*> pOf <*> parseList_Alt
@@ -195,15 +195,15 @@ parseLetExp =
          (\tk1 a tk2 b -> reuseLetExp [tk1, tk2] (Just $ getTokenIDP tk1) (Just $ getTokenIDP tk2) (Just a) (Just b))
      <$> pLet <*> parseList_Decl <*> pIn <*> parseExp
 
-      
+
 -- lists with separators are still a bit awkward
-parseListExp = 
+parseListExp =
          (\tk1 (tks, list_Exp) tk2 -> reuseListExp ([tk1, tk2]++tks) (Just $ getTokenIDP tk1) (Just $ getTokenIDP tk2) (Just $ map getTokenIDP tks) (Just $ list_Exp))
      <$> pKey "[" <*> parseList_Exp <*> pKey "]"
 
 -- same here
 parseParenExp = -- maybe we don't want to build a list for (exp), because now we have to remove it
-         (\tk1 (tks, list_Exp) tk2 -> if arity list_Exp == 1 
+         (\tk1 (tks, list_Exp) tk2 -> if arity list_Exp == 1
                                       then let Clip_Exp exp = select [0] list_Exp -- unsafe match, but will never fail due to check
                                            in  reuseParenExp [tk1, tk2] (Just $ getTokenIDP tk1) (Just $ getTokenIDP tk2) (Just $ exp)
                                       else reuseProductExp ([tk1, tk2]++tks) (Just $ getTokenIDP tk1) (Just $ getTokenIDP tk2) (Just $ map getTokenIDP tks) (Just $ list_Exp))
@@ -219,34 +219,34 @@ parseList_Exp =
                                        Just (e, etks) -> let (tks, es) = unzip etks
                                                          in  (tks, e:es)
                   in  (toks, reuseList_Exp [] (Just $ toConsList_Exp elts)))
-     <$>  pMaybe (     (\e etks -> (e,etks)) 
+     <$>  pMaybe (     (\e etks -> (e,etks))
                   <$> parseExp <*> pList ((,) <$> pKey "," <*> parseExp))
-         
-         
-    
+
+
+
 parseExp = -- use chain!!  and fix associativity of application!
           parseExp'   -- e and t are flipped in lambda for <??>
      <??> (    (\tk e t-> reusePlusExp [tk] (Just $ getTokenIDP tk) (Just t) (Just e))
-           <$> pKey "+" <*> parseExp 
+           <$> pKey "+" <*> parseExp
           )
-          
-parseExp' = 
+
+parseExp' =
            parseTerm   -- e and t are flipped in lambda for <??>
       <??> (    (\tk e t->  reuseDivExp [tk] (Just $ getTokenIDP tk) (Just t) (Just e))
-            <$> pKey "%" <*> parseExp' 
+            <$> pKey "%" <*> parseExp'
            )
-           
-parseTerm   = 
+
+parseTerm   =
            parseFactor
       <??> (      (\tk t f-> reuseTimesExp [tk] (Just $ getTokenIDP tk) (Just f) (Just t))
-              <$> pKey "*" 
+              <$> pKey "*"
               <*> parseTerm
            <|>    (\tk t f-> reuseDivExp [tk] (Just $ getTokenIDP tk) (Just f) (Just t))
               <$> pKey "/"
               <*> parseTerm
            )
 
-parseFactor = 
+parseFactor =
            parseFactor'
       <??> (    (\tk f f' -> reusePowerExp [tk] (Just $ getTokenIDP tk) (Just f') (Just f))
             <$> pKey "^" <*> parseFactor
@@ -258,15 +258,15 @@ parseFactor =
 parsePowerr = (pStrAlt Node_PowerExp $
          (\str e2 -> reusePowerExp [str] (Just $ getTokenIDP str) Nothing (Just e2))
      <$> pStructuralTk Node_PowerExp
-     <*> recognizeExp) 
+     <*> recognizeExp)
 
-parseFactor' =   
+parseFactor' =
            parseFactor''
       <??> (    (\f' f'' -> reuseAppExp [] (Just f'') (Just f'))
             <$> parseFactor')
 
 parseFactor'' =
-      parseIntExp 
+      parseIntExp
   <|> parseBoolExp
   <|> parseIdentExp
   <|> parseListExp
@@ -276,8 +276,8 @@ parseFactor'' =
   <|> parseCaseExp
   <|> parseLetExp
   <|> recognizeExp'
-     
-parseIdent = 
+
+parseIdent =
          (\strTk -> reuseIdent [strTk] (Just $ getTokenIDP strTk) Nothing (Just $ tokenString strTk))
      <$> pLIdent
 
@@ -312,14 +312,14 @@ pFalse  = pKey "False"
 obsolete
 -- parseString needs to parse the ParseToken, rewrite, so it doesn't use reuseString
 parseString_ = pPrs $
---           (\strTk -> reuseString_ [] (Just $ tokenString strTk)) 
+--           (\strTk -> reuseString_ [] (Just $ tokenString strTk))
           mkString_
-     <$>  pLIdent     
+     <$>  pLIdent
      <|> (HoleString_ <$ pStructuralTk Node_HoleString_)
 
 
 parseInt_ = pStr $
---           (\strTk -> reuseString_ [] (Just $ tokenString strTk)) 
+--           (\strTk -> reuseString_ [] (Just $ tokenString strTk))
           mkInt_
      <$>  pInt
      <|> (HoleInt_ <$ pStructuralTk Node_HoleInt_)
@@ -327,7 +327,7 @@ parseInt_ = pStr $
 
 
 parseBool_ = pStr $
---           (\strTk -> reuseString_ [] (Just $ tokenString strTk)) 
+--           (\strTk -> reuseString_ [] (Just $ tokenString strTk))
          mkBool_
      <$> (True <$ pTrue <|> False <$ pFalse)
      <|> (HoleBool_ <$ pStructuralTk Node_HoleBool_)
@@ -337,13 +337,13 @@ parseIntExp =
          (\tk -> reuseIntExp [tk] (Just $ getTokenIDP tk) (Just $ read (tokenString tk)))
      <$> pInt
 
-parseBoolExp = 
+parseBoolExp =
          (\tk -> reuseBoolExp [tk] (Just $ getTokenIDP tk) (Just True))
      <$> pTrue
   <|>    (\tk -> reuseBoolExp [tk] (Just $ getTokenIDP tk) (Just False))
      <$> pFalse
 
-  
+
 --------------------------------------------------------------
 --- testing bits
 {-
@@ -351,12 +351,12 @@ clparse str  = let (prs,layoutmap,counter) = tokenize 0 Nothing . ParsingP NoIDP
                    tokens = enrichedDocTk : postScanStr prs Nothing
                    result = runParser recognizeRootEnr tokens
                in  debug Err ("Parsing: "++show (tokens)++"\nhas result:") $
-                   result 
+                   result
 clparsep p str  = let (prs,layoutmap,counter) = tokenize 0 Nothing . ParsingP NoIDP . StringP NoIDP $ str
                       tokens = postScanStr prs Nothing
                       result = runParser p tokens
                   in  debug Err ("Parsing: "++show (tokens)++"\nhas result:") $
-                      result 
+                      result
 
 -}
 --------------------------------------------------------------
@@ -369,7 +369,7 @@ clparsep p str  = let (prs,layoutmap,counter) = tokenize 0 Nothing . ParsingP No
 
 --Design issues with parsing and structure recognizing (choose different name? recognizer is usually parser with Bool result)
 
--- TODO: 
+-- TODO:
 
 
 -- put "tokenNode" application in generated code, now it appears everywhere
@@ -405,7 +405,7 @@ clparsep p str  = let (prs,layoutmap,counter) = tokenize 0 Nothing . ParsingP No
 {-
 comments from old parser
 
-The id of the origin is used to set the id of the doc element. 
+The id of the origin is used to set the id of the doc element.
 (only succeeds if origin was of same type)
 In case of several symbols (eg. if .. then .. else ..fi): if 1st fails, try 2nd, etc.
 
@@ -414,7 +414,7 @@ For each parse, reuse everything that is not in the parse
 
 -}
 
- 
+
 -- ******** rename plus to sum
 -- remember to that "Chess", "Slides", "board", and "pres" must be keywords in PresentationParsing
 
@@ -422,7 +422,7 @@ For each parse, reuse everything that is not in the parse
 {-
 Parser notes
 
-inserted layout? 
+inserted layout?
 
 a = + 2; -> a = HOLE + 2;        single space
 a = 2 -> a = 2;                          no whitespace
@@ -486,10 +486,10 @@ lIdentVal :: DocNode node => Token doc enr node clip UserToken -> String
 lIdentVal (UserTk _ LIdentTk str _ _) = str
 lIdentVal tk                          = debug Err ("PresentationParser.lIdentVal: no IdentTk " ++ show tk) "x"
 
-  
+
 intVal :: DocNode node => Token doc enr node clip UserToken -> Int
 intVal (UserTk _ IntTk "" _ _)  = 0   -- may happen on parse error (although not likely since insert is expensive)
 intVal (UserTk _ IntTk str _ _) = read str
 intVal tk              = debug Err ("PresentationParser.intVal: no IntTk " ++ show tk) (-9999)
 
- 
+
