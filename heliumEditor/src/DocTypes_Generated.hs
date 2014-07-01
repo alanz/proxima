@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveDataTypeable #-}
 module DocTypes_Generated where
 
 import Common.CommonTypes

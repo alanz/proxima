@@ -3,6 +3,8 @@ module ScannerSheetHS where
 
 import DocTypes_Generated
 import Layout.ScanLib
+import Data.Word (Word8)
+import qualified Data.Bits
 }
 
 $digit = 0-9            -- digits
@@ -57,3 +59,4 @@ tokens :-
 
 
 -- in case of a lexical error from Alex, just add a single quote here. (total should be even)
+

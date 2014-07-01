@@ -50,8 +50,8 @@ lexer: src/ScannerSheetHS.hs
 
 # the -t causes Alex to look for a template file.
 src/ScannerSheetHS.hs: src/ScannerSheet.x $(LAYOUTDIR)/AlexTemplate-ghc
-#	alex -t $(LAYOUTDIR) --o src/ScannerSheetHS.hs --ghc src/ScannerSheet.x
-	alex                 --o src/ScannerSheetHS.hs --ghc src/ScannerSheet.x
+	alex -t $(LAYOUTDIR) --o src/ScannerSheetHS.hs --ghc src/ScannerSheet.x
+#	alex                 --o src/ScannerSheetHS.hs --ghc src/ScannerSheet.x
 
 # the generated file is ScannerSheetHS, because if ScannerSheet is listed as a source in the
 # cabal file, setup automatically runs Alex on it, and in cabal it's not possible to specify
@@ -92,6 +92,7 @@ proxima:
 	cd $(PROXIMASRCDIR); make
 
 $(MAIN): proxima generate presenter lexer
+#$(MAIN): proxima generate presenter
 	$(HC) --make -o $(MAIN) src/Main.hs -i$(ALLSRCDIRS) $(HC_OPTS)
 
 
