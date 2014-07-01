@@ -25,10 +25,10 @@ LAYOUTDIR       = $(PROXIMADIR)/src/Layout
 
 PROXIMADIRS = $(PROXIMASRCDIR)
 
-# Generation 
+# Generation
 
 generate: src/DocTypes_Generated.hs
-	
+
 src/DocTypes_Generated.hs : src/DocumentType.prx
 	cd $(PROXIMASRCDIR)
 	$(GEN) src src/DocumentType.prx
@@ -38,19 +38,19 @@ src/DocTypes_Generated.hs : src/DocumentType.prx
 
 # target for only compiling presentationAG, useful when working with GHCi
 presenter: src/PresentationAG.hs
-	
+
 src/PresentationAG.hs: src/PresentationAG.ag \
 	src/PresentationAG_Generated.ag \
-	
+
 	@echo "Compiling presentationAG.ag"
 	@$(AGC) -o src/PresentationAG.hs -cfmspw --self --Wmax=12 --genlinepragmas --module=PresentationAG src/PresentationAG.ag -P src
 
 
 lexer: src/ScannerSheetHS.hs
 
-# the -t causes Alex to look for a template file. 
+# the -t causes Alex to look for a template file.
 src/ScannerSheetHS.hs: src/ScannerSheet.x $(LAYOUTDIR)/AlexTemplate-ghc
-	alex -t $(LAYOUTDIR) --o src/ScannerSheetHS.hs --ghc src/ScannerSheet.x 
+	alex -t $(LAYOUTDIR) --o src/ScannerSheetHS.hs --ghc src/ScannerSheet.x
 
 # the generated file is ScannerSheetHS, because if ScannerSheet is listed as a source in the
 # cabal file, setup automatically runs Alex on it, and in cabal it's not possible to specify
@@ -66,7 +66,7 @@ clean:
 
 # cannot delete *_Generated.hs sources, so we touch src/DocumentType.prx, causing them to be
 # recompiled on the next make
-	
+
 
 # also clean Proxima
 clean-proxima: clean
@@ -75,7 +75,7 @@ clean-proxima: clean
 # also clean uust
 clean-proxima-all: clean
 	cd $(PROXIMASRCDIR); make clean-all
-	
+
 #directories
 
 
@@ -89,7 +89,7 @@ HC_OPTS = -static -fglasgow-exts -fallow-overlapping-instances -fallow-undecidab
 
 proxima:
 	cd $(PROXIMASRCDIR); make
-	
+
 $(MAIN): proxima generate presenter lexer
 	$(HC) --make -o $(MAIN) src/Main.hs -i$(ALLSRCDIRS) $(HC_OPTS)
 

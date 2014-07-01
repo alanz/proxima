@@ -3,6 +3,8 @@ module ScannerSheetHS where
 
 import DocTypes_Generated
 import Layout.ScanLib
+import Data.Word (Word8)
+import qualified Data.Bits
 }
 
 $char = .#[\n\ ]

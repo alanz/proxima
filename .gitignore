@@ -4,3 +4,5 @@
 *.bak
 /heliumEditor/src/PresentationAG.hs
 /heliumEditor/src/ScannerSheetHS.hs
+/dazzleEditor/src/PresentationAG.hs
+/dazzleEditor/src/ScannerSheetHS.hs
