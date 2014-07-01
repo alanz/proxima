@@ -1,12 +1,23 @@
 name: MinimalEditor
 version: 0.1
-cabal-version: -any
+-- cabal-version: -any
+cabal-version: >= 1.2
 license: AllRightsReserved
 license-file: ""
 copyright: (c) 2007 Martijn Schrage
 maintainer: martijn@cs.uu.nl
-build-depends: Cabal -any, base -any, gtk >=0.9.11, haskell98 -any,
-               parsec >=2.0, time >=1.0
+build-depends: Cabal -any
+             , base -any
+             , gtk >=0.9.11
+             -- , haskell98 -any
+             , parsec >=2.0
+             , time >=1.0
+             , uulib
+             , cairo
+             , syb
+             , containers
+             , array
+             , directory
 stability: experimental
 homepage: http://www.cs.uu.nl/research/projects/proxima
 package-url:
@@ -25,44 +36,52 @@ extra-tmp-files:
 executable: MinimalEditor
 main-is: Main.hs
 buildable: True
-cc-options:
-ld-options:
-frameworks:
-c-sources:
-extensions:
-extra-libraries:
-extra-lib-dirs: .
-includes:
-install-includes:
-include-dirs:
-hs-source-dirs: src/uuagc/src/ src/proxima/src src
+-- cc-options:
+-- ld-options:
+-- frameworks:
+-- c-sources:
+-- extensions:
+-- extra-libraries:
+-- extra-lib-dirs: .
+-- includes:
+-- install-includes:
+-- include-dirs:
+hs-source-dirs: src/proxima/src src
 other-modules: Arrangement.ArrLayerTypes Arrangement.ArrLayerUtils
-               Arrangement.ArrPresent Arrangement.ArrTranslate
+               -- Arrangement.ArrPresent Arrangement.ArrTranslate
+               Arrangement.ArrPresent
                Arrangement.ArrTypes Arrangement.ArrUtils Arrangement.Arranger
                Arrangement.ArrangerAG Arrangement.FontLib Common.CommonTypes
                Common.CommonUtils Common.DebugLevels Evaluation.DocTypes
                Evaluation.DocUtils Evaluation.DocumentEdit Evaluation.EnrTypes
                Evaluation.EnrUtils Evaluation.EvalLayerTypes
                Evaluation.EvalLayerUtils Evaluation.EvalPresent
-               Evaluation.EvalTranslate Layout.LayLayerTypes Layout.LayLayerUtils
-               Layout.LayPresent Layout.LayTranslate Layout.LayTypes
+               -- Evaluation.EvalTranslate Layout.LayLayerTypes Layout.LayLayerUtils
+               Layout.LayLayerTypes Layout.LayLayerUtils
+               -- Layout.LayPresent Layout.LayTranslate Layout.LayTypes
+               Layout.LayPresent Layout.LayTypes
                Layout.LayUtils Layout.Layout Layout.ScanLib Layout.Scanner
                Layout.ScannerAG Layout.TreeEditPres Presentation.PresLayerTypes
                Presentation.PresLayerUtils Presentation.PresPresent
-               Presentation.PresTranslate Presentation.PresTypes
+               -- Presentation.PresTranslate Presentation.PresTypes
+               Presentation.PresTypes
                Presentation.PresUtils Presentation.PresentationParsing
                Presentation.XLatex Presentation.XprezLib Proxima.Architecture
                Proxima.ArchitectureLibM Proxima.GUI Proxima.Proxima
                Rendering.RenLayerTypes Rendering.RenLayerUtils
-               Rendering.RenPresent Rendering.RenTranslate Rendering.RenTypes
-               Rendering.RenUtils Rendering.Renderer UU.Parsing.CharParser
-               UU.Parsing.Derived UU.Parsing.Interface UU.Parsing.Machine
-               UU.Parsing.MachineInterface UU.Parsing DocTypes_Generated
+               -- Rendering.RenPresent Rendering.RenTranslate Rendering.RenTypes
+               Rendering.RenPresent Rendering.RenTypes
+               Rendering.RenUtils Rendering.Renderer
+               -- UU.Parsing.CharParser
+               -- UU.Parsing.Derived UU.Parsing.Interface UU.Parsing.Machine
+               -- UU.Parsing.MachineInterface UU.Parsing
+               DocTypes_Generated
                DocUtils_Generated DocumentEdit_Generated Evaluator Main
                PresentationAG ProxParser ProxParser_Generated Reducer ScannerSheet
                Settings
-ghc-prof-options:
-ghc-options: -w -fglasgow-exts -fallow-undecidable-instances -fno-monomorphism-restriction
-hugs-options:
-nhc-options:
-jhc-options:
+-- ghc-prof-options:
+ghc-options: -w -fglasgow-exts
+extensions: UndecidableInstances NoMonomorphismRestriction
+-- hugs-options:
+-- nhc-options:
+-- jhc-options:
