@@ -1,0 +1,5 @@
+:set -i./proxima/src
+:set -XNoMonomorphismRestriction
+:set -XUndecidableInstances
+:set -fglasgow-exts
+:set -fobject-code
