@@ -14,14 +14,14 @@ import UU.Parsing
 import UU.Parsing.CharParser
 
 initialDocument :: IO Document
-initialDocument = 
+initialDocument =
  do { let filePath = "Heliumfile.hs"
     ; dir <- getCurrentDirectory
-    ; debugLnIO Prs $ "InitDoc: opening file: "++"Proxima.hs"++ " at " ++dir  
+    ; debugLnIO Prs $ "InitDoc: opening file: "++"Proxima.hs"++ " at " ++dir
     ; fileContents <- readFile filePath
-    ; return $ RootDoc $ Root NoIDP (ParseErrList_Decl 
+    ; return $ RootDoc $ Root NoIDP (ParseErrList_Decl
                                        (ParsingParseErr NoIDP []
-                                       [ ErrorTk 0 fileContents NoIDP ] 
+                                       [ ErrorTk 0 fileContents NoIDP ]
                                        (Lexer 0 NonStyled)
                                        (error "DocUtils.generated.initialDocument: No clipparser specified")))
     }
@@ -29,7 +29,7 @@ initialDocument =
     -- the proxima parser is used when the presented document is parsed.
     -- we can specify the parser when we start using pStructural for the Helium editor.
     -- (although this will cause a cycle)
-    
+
 -- HeliumTypeInfo is not a ProximaType, so we need to declare toXML and parseXML
 toXMLHeliumTypeInfo _ = Elt "HeliumTypeInfo" [] []
 parseXML_HeliumTypeInfo = ([],[],[]) <$ emptyTag "HeliumTypeInfo"
@@ -57,15 +57,15 @@ demoBoard = Board r8 r7 r6 r5 r4 r3 r2 r1
        r8 = BoardRow e  wk e  wr e  e  e  e
        [e,wp,wr,wn,wb,wq,wk,bp,br,bn,bb,bq,bk] = Empty : pieces True ++ pieces False
        pieces c = [Pawn c, Rook c, Knight c, Bishop c, Queen c, King c]
-      
-  
+
+
 -- Kasparov,G - Lautier,J Moscow, 1995 1.Ng4!! Qe6 [1...Rxg5 2.Nxe5 Rxh5 3.Rd8+ Ng8 4.Nxf7#] 2.Rd8 Qg6 3.Qxe7 1-0
 
 emptyBoard = Board emptyRow emptyRow emptyRow emptyRow emptyRow emptyRow emptyRow emptyRow
 
 emptyRow = BoardRow Empty Empty Empty Empty Empty Empty Empty Empty
 
-pawnRow c = BoardRow (Pawn c) (Pawn c) (Pawn c) (Pawn c) 
+pawnRow c = BoardRow (Pawn c) (Pawn c) (Pawn c) (Pawn c)
                           (Pawn c) (Pawn c) (Pawn c) (Pawn c)
 backRow c = BoardRow (Rook c) (Knight c) (Bishop c) (Queen c) 
                           (King c) (Bishop c) (Knight c) (Rook c)
