@@ -22,11 +22,11 @@ gain = main -- when typing during compilation GHCI replaces the first command li
 main = proxima Settings.settings
                PresentationAG.presentationSheet
                ProxParser.recognizeEnrichedDoc
-               ScannerSheetHS.scanner 
+               ScannerSheetHS.scanner
                -- sheet parameters (evaluation and reduction sheets are passed implicitly through
                -- instances of Evaluation/ReductionSheet classes)
                --
-               (DocumentLevel HoleDocument NoPathD Clip_Nothing)   
-               (EnrichedDocLevel HoleEnrichedDoc NoPathD HoleDocument)   
+               (DocumentLevel HoleDocument NoPathD Clip_Nothing)
+               (EnrichedDocLevel HoleEnrichedDoc NoPathD HoleDocument)
 
 -- Note: this file does not need to be changed when instantiating an editor.
